@@ -3,8 +3,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 
 from workroomsapp.lecture import lecture_responses
-from workroomsapp.lecture.serializers.as_customer_serializers import *
-from workroomsapp.lecture.serializers.as_lecturer_serializers import LecturesGetSerializer
+from workroomsapp.lecture.serializers.as_lecturer_serializers import *
 from workroomsapp.models import Customer, Lecturer
 from workroomsapp.utils import workroomsapp_permissions
 
@@ -31,7 +30,7 @@ class LectureAsCustomerAPIView(APIView):
             lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
             lowest = lowest.get('maximum')
 
-            if lowest > datetime.datetime.now(tz=datetime.timezone.utc):
+            if lowest > datetime.datetime.now():
                 filtered_lectures.append(lecture)
 
         return filtered_lectures

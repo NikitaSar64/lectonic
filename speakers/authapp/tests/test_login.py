@@ -1,12 +1,12 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
 
 from authapp.models import Token, User
+from authapp.tests.base import BaseSignUpTestCase
 
 
-class TestLogin(APITestCase):
-
+class TestLogin(BaseSignUpTestCase):
     def setUp(self):
+        super().setUp()
         data = {'email': 'admin@admin.ru', 'password': '12345678'}
         User.objects.create(**data)
 
@@ -16,7 +16,8 @@ class TestLogin(APITestCase):
         response = self.client.post(reverse('login'), data)
         self.assertEqual(
             response.status_code, 200,
-            msg='Пользователь не был авторизован'
+            msg='Пользователь не был авторизован:\n'
+                f'Ответ: {response.data}'
         )
 
         user = User.objects.get(email=data['email'])

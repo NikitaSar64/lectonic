@@ -1,25 +1,11 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase, override_settings
 
-from speakers.utils.tests import data
-from speakers.utils.tests.upload_image import test_image
-from workroomsapp.models import City
+from workroomsapp.person.tests.base import PersonCreateTestCase
 
 
-@override_settings(MEDIA_URL=test_image.MEDIA_URL, MEDIA_ROOT=test_image.MEDIA_ROOT)
-class TestPersonGet(APITestCase):
-    signup_data = data.SIGNUP.copy()
-    profile_data = data.PROFILE.copy()
-    profile_data['city'] = '1'
-
+class TestPersonGet(PersonCreateTestCase):
     def setUp(self):
-        temp_signup_data = self.signup_data.copy()
-        self.profile_data['photo'] = test_image.create_image()
-        temp_profile_data = self.profile_data.copy()
-        self.client.post(reverse('signup'), temp_signup_data)
-
-        City.objects.create(name='Москва', pk=1)
-        self.client.post(reverse('profile'), temp_profile_data)
+        super().setUp()
 
     def test_credentials(self):
         self.client.get(reverse('logout'))
@@ -38,7 +24,9 @@ class TestPersonGet(APITestCase):
 
     def test_city_is_string(self):
         response = self.client.get(reverse('profile'))
+        print(response.data)
         self.assertEqual(
-            response.data['data'][0]['city'], 'Москва',
-            msg='Неверное отображение города в ответе при получении профиля пользователя'
+            response.data['data'][0]['city']['name'], 'Москва',
+            msg='Неверное отображение города в ответе при получении профиля пользователя\n'
+                f'Ответ: {response.data}'
         )
