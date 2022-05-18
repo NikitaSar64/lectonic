@@ -1,12 +1,12 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
 
 from authapp.models import Token, User
+from authapp.tests.base import BaseSignUpTestCase
 
 
-class TestLogout(APITestCase):
-
+class TestLogout(BaseSignUpTestCase):
     def setUp(self):
+        super().setUp()
         data = {'email': 'admin@admin.ru', 'password': '12345678'}
         self.client.post(reverse('signup'), data)
 

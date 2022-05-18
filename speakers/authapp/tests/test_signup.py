@@ -1,12 +1,14 @@
-from django.contrib.auth.hashers import make_password
 from django.urls import reverse
-from rest_framework.test import APITestCase
 
 from authapp.models import User
 from authapp.models import Token
+from authapp.tests.base import BaseSignUpTestCase
+from emailapp.models import EmailConfirmation
 
 
-class TestSignup(APITestCase):
+class TestSignup(BaseSignUpTestCase):
+    def setUp(self):
+        super().setUp()
 
     def test_user_was_created(self):
         data = {'email': 'admin@admin.ru', 'password': '12345678'}
@@ -52,52 +54,26 @@ class TestSignup(APITestCase):
         )
 
     def test_wrong_email(self):
+        emails = ['admin@admin.r', 'admin@admin..ru', 'admin@@admin.ru', 'admдin@admin.ru', 'admin@adдmin.ru']
         data = {'email': 'admin@admin.r', 'password': '12345678'}
 
-        response1 = self.client.post(reverse('signup'), data)
-        self.assertEqual(
-            response1.status_code, 400,
-            msg='Неверный статус ответа при вводе эмейла с одной буквой после точки'
-        )
-
-        data['email'] = 'admin@admin..ru'
-
-        response2 = self.client.post(reverse('signup'), data)
-        self.assertEqual(
-            response2.status_code, 400,
-            msg='Неверный статус ответа при вводе эмейла с двумя точками'
-        )
-
-        data['email'] = 'admin@@admin.ru'
-
-        response3 = self.client.post(reverse('signup'), data)
-        self.assertEqual(
-            response3.status_code, 400,
-            msg='Неверный статус ответа при вводе эмейла с двумя собаками'
-        )
-
-        data['email'] = 'admдin@admin.ru'
-
-        response4 = self.client.post(reverse('signup'), data)
-        self.assertEqual(
-            response4.status_code, 400,
-            msg='Неверный статус ответа при наличии русских символов в эмейле'
-        )
-
-        data['email'] = 'admin@adдmin.ru'
-
-        response5 = self.client.post(reverse('signup'), data)
-        self.assertEqual(
-            response5.status_code, 400,
-            msg='Неверный статус ответа при наличии русских символов в эмейле'
-        )
+        for email in emails:
+            data['email'] = email
+            EmailConfirmation.objects.create(email=email, confirmed=True)
+            response = self.client.post(reverse('signup'), data)
+            self.assertEqual(
+                response.status_code, 400,
+                msg='Неверный статус ответа при вводе некорректного эмейла\n'
+                    f'Ответ: {response.data}'
+            )
 
         data['email'] = 'admi-n@admin.ru'
-
-        response6 = self.client.post(reverse('signup'), data)
+        EmailConfirmation.objects.create(email=data['email'], confirmed=True)
+        response = self.client.post(reverse('signup'), data)
         self.assertEqual(
-            response6.status_code, 201,
-            msg='Неверный статус ответа при наличии дефиса в эмейле'
+            response.status_code, 201,
+            msg='Неверный статус ответа при наличии дефиса в эмейле\n'
+                f'Ответ: {response.data}'
         )
 
     def test_wrong_password(self):
