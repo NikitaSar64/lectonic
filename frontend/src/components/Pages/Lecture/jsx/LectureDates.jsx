@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react'
-import {connect} from "react-redux";
+import {connect} from "react-redux"
 
-import {getMonth} from "../../../WorkRooms/CreateEvent/jsx/CalendarModal";
-import {DateTime} from "luxon";
-import {UpdateLectureDetailChosenDates} from "../redux/actions/lectureDetail";
-import {checkEqualDates} from "../../../WorkRooms/FullCalendar/Calendar/utils/date";
+import {getMonth} from '../../../WorkRooms/CreateEvent/jsx/CalendarModal'
+import {DateTime} from "luxon"
+import {UpdateLectureDetailChosenDates} from '../redux/actions/lectureDetail'
+import {checkEqualDates} from '../../../WorkRooms/FullCalendar/Calendar/utils/date'
 
 
 function LectureDates(props) {
@@ -43,7 +43,7 @@ function LectureDates(props) {
   
   function handleClickDate(dateStart) {
     if (data.length === 1 || canChoseDate) return
-    let newDates;
+    let newDates
     if (checkDateInArr(dateStart, chosenDates) && !checkDateInArr(dateStart, rejectedDates)) {
       newDates = chosenDates.filter(elem => elem !== dateStart)
     }
@@ -58,15 +58,15 @@ function LectureDates(props) {
         {data.map((elem, index) => {
           return <div className="date__wrapper" key={index} onClick={() => handleClickDate(elem.startDate)}>
             <div className={elem.startDate < today || checkDateInArr(elem.startDate, rejectedDates) ? 
-                "date__block inactive" : checkDateInArr(elem.startDate, chosenDates) ? 
-              "date__block active" : "date__block"}>
+                'date__block inactive' : checkDateInArr(elem.startDate, chosenDates) ? 
+              'date__block active' : 'date__block'}>
               <span className="date">
-                {elem.startDate.getDate()} {getMonth(elem.startDate.getUTCMonth())}</span>
+                {elem.startDate.getDate()} {getMonth(elem.startDate.getMonth())}</span>
               <span className="time">
-                {elem.startDate.getUTCHours().toString().padStart(2, '0')}:
-                {elem.startDate.getUTCMinutes().toString().padStart(2, '0')}-
-                {elem.endDate.getUTCHours().toString().padStart(2, '0')}:
-                {elem.endDate.getUTCMinutes().toString().padStart(2, '0')}</span>
+                {elem.startDate.getHours().toString().padStart(2, '0')}:
+                {elem.startDate.getMinutes().toString().padStart(2, '0')}-
+                {elem.endDate.getHours().toString().padStart(2, '0')}:
+                {elem.endDate.getMinutes().toString().padStart(2, '0')}</span>
             </div>
           </div>
         })}
