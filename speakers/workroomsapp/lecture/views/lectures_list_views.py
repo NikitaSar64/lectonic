@@ -73,15 +73,29 @@ class PotentialLecturesMixin(LecturesListBaseMixin):
 
         raise NotImplementedError()
 
-    def filter_lectures(self):
+    def check_lecture_is_not_confirmed(self, lecture) -> bool:
+        """ Проверяет являются ли все даты лекции подтвержденными """
+
+        l_requests = lecture.lecture_requests
+
+        if l_requests.filter(
+                respondent_obj__confirmed=True, respondent_obj__person=self.request.user.person):
+            # Если лекция подтверждена и пользователь является подтвержденным
+            return False
+        elif l_requests.all().count() == 1 and l_requests.filter(
+                respondent_obj__confirmed=True):
+            # Если у лекции всего одна дата и она подтверждена
+            return False
+        return True
+
+    def filter_lectures(self) -> list:
         creators = self.get_creators()
         lecture_list = []
 
         for creator in creators:
-            for lecture in creator.lectures.all():
+            for lecture in creator.lectures.prefetch_related('lecture_requests').all():
 
-                if lecture.lecture_requests.filter(
-                        respondent_obj__confirmed=True, respondent_obj__person=self.request.user.person):
+                if not self.check_lecture_is_not_confirmed(lecture):
                     continue
 
                 lowest = lecture.lecture_requests.aggregate(maximum=Max('event__datetime_start'))
