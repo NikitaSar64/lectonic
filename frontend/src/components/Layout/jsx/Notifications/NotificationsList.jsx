@@ -7,8 +7,8 @@ import {SetSelectedChat} from "../../redux/actions/header";
 import {getLecturePhoto} from "../../../../ProjectConstants";
 import {SetChatConnFail} from "../../redux/actions/ws";
 import myLectureIcon from "~/assets/img/chat/my-lecture-icon.svg"
-import myResponseIcon from "~/assets/img/chat/my-response-icon.svg"
-import PhotoName from "../../../Utils/jsx/PhotoName";
+import myResponseIcon from '~/assets/img/chat/my-response-icon.svg'
+import PhotoName from '../../../Utils/jsx/PhotoName'
 
 
 function NotificationsList(props) {
