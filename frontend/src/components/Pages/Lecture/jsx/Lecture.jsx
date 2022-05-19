@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState} from 'react'
 
 import lectureBg from '~/assets/img/lecture-bg.png'
 import backArrowWhite from '~/assets/img/back-arrow-white.svg'
-import LectureDates from "./LectureDates";
-import {useNavigate, useSearchParams} from "react-router-dom";
-import {getLectureDetail} from "../ajax/lecture";
-import {getLecturePhoto, reverse} from "../../../../ProjectConstants";
-import {responseOnLecture, cancelResponseOnLecture} from "../../../WorkRooms/WorkRoom/ajax/workRooms";
-import {connect} from "react-redux";
-import {AddNotifications, RemoveNotification} from "../../../Layout/redux/actions/notifications";
-import PhotoName from "../../../Utils/jsx/PhotoName";
-import {UpdateLectureDetailChosenDates} from "../redux/actions/lectureDetail";
-import Loader from "../../../Utils/jsx/Loader";
+import LectureDates from './LectureDates'
+import {useNavigate, useSearchParams} from 'react-router-dom'
+import {getLectureDetail} from '../ajax/lecture'
+import {getLecturePhoto, reverse} from '../../../../ProjectConstants'
+import {responseOnLecture, cancelResponseOnLecture} from '../../../WorkRooms/WorkRoom/ajax/workRooms'
+import {connect} from 'react-redux'
+import {AddNotifications, RemoveNotification} from '../../../Layout/redux/actions/notifications'
+import PhotoName from '../../../Utils/jsx/PhotoName'
+import {UpdateLectureDetailChosenDates} from '../redux/actions/lectureDetail'
+import Loader from '../../../Utils/jsx/Loader'
 
 
 function Lecture(props) {
@@ -51,7 +51,7 @@ function Lecture(props) {
     setResponseLoaded(false)
     let text = e.target.innerText
     let dates = props.store.lectureDetail.chosenDates.map(
-      elem => `${elem.getUTCFullYear()}-${elem.getUTCMonth() + 1}-${elem.getUTCDate()}T${elem.getUTCHours()}:${elem.getUTCMinutes()}`)
+      elem => `${elem.getFullYear()}-${elem.getMonth() + 1}-${elem.getDate()}T${elem.getHours()}:${elem.getMinutes()}`)
     
     if (lectureData) {
       if (lectureData.can_response) {
@@ -106,14 +106,14 @@ function Lecture(props) {
           <div className="left-block">
             <div className="lecture-photo"><img src={getLecturePhoto(lectureData?.svg)} alt=""/></div>
             <div className="subheader">
-              <div className="type blue">{lectureData?.creator_is_lecturer ? "Лекция" : "Запрос на лекцию"}</div>
+              <div className="type blue">{lectureData?.creator_is_lecturer ? 'Лекция' : 'Запрос на лекцию'}</div>
               <div className="type">{lectureData?.lecture_type}</div>
             </div>
             <div className="block__person" 
                  onClick={() => lectureData?.creator_is_lecturer ? 
                    navigate(reverse('role_page', {lecturer: lectureData.creator_id})) : 
                    navigate(reverse('role_page', {customer: lectureData.creator_id})) }>
-              <div className="header">{lectureData?.creator_is_lecturer ? "Лектор:" : "Заказчик:"}</div>
+              <div className="header">{lectureData?.creator_is_lecturer ? 'Лектор:' : 'Заказчик:'}</div>
               <div className="block__data">
                 <div className="person-photo">
                   {lectureData?.creator_photo ?
@@ -157,17 +157,17 @@ function Lecture(props) {
             <div className="block__dates">
               <div className="header">
                 {lectureData?.creator_is_lecturer ? 
-                  "Лектор готов провести лекцию:" : "Заказчик готов послушать лекцию:"}
+                  'Лектор готов провести лекцию:' : 'Заказчик готов послушать лекцию:'}
               </div>
               <LectureDates data={lectureData?.dates} responseDates={lectureData?.response_dates}/>
             </div>
             <div className="block__address">
               <div className="header">Место проведения:</div>
-              <span>{lectureData?.hall_address || "Не согласовано"}</span>
+              <span>{lectureData?.hall_address || 'Не согласовано'}</span>
             </div>
             <div className="block__description">
               <div className="header">Описание:</div>
-              <span>{lectureData?.description || "Нет"}</span>
+              <span>{lectureData?.description || 'Нет'}</span>
             </div>
             {!isCreator && 
               <button className="btn btn-response" 
@@ -178,16 +178,16 @@ function Lecture(props) {
                           left="50%" 
                           top="50%" 
                           tX="-50%" tY="-50%"/> : 
-                  confirmedRespondent ? "Лекция подтверждена" : 
+                  confirmedRespondent ? 'Лекция подтверждена' : 
                     lectureData?.can_response ? 
-                      "Откликнуться" : "Отменить отклик"}
+                      'Откликнуться' : 'Отменить отклик'}
               </button>}
           </div>
           
         </div>
       </div>
     </>
-  );
+  )
 }
 
 export default connect(
@@ -197,4 +197,4 @@ export default connect(
     AddNotifications: (data) => dispatch(AddNotifications(data)),
     UpdateLectureDetailChosenDates: (dates) => dispatch(UpdateLectureDetailChosenDates(dates))
   })
-)(Lecture);
+)(Lecture)
